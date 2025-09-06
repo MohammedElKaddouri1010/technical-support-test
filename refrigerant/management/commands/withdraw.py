@@ -38,5 +38,8 @@ class Command(BaseCommand):
     def withdraw_safe(self, vessel_id):
         with transaction.atomic():
             vessel = Vessel.objects.select_for_update().get(id=vessel_id)
+            if vessel.content <= 0:
+                self.stdout.write("Vessel is empty! Cannot withdraw more.")
+                return
             vessel.content -= 10.0
             vessel.save()
